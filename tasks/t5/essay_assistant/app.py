@@ -38,19 +38,6 @@ class EssayAssistantApplication(ChatCompletion):
                     if delta  and delta.content:
                         choice.append_content(delta.content)
 
-        #TODO:
-        # 1. Create self-closable choice where we return response (you can find this code in echo app)
-        #    (you need to call `response.create_single_choice()`
-        # 2. Assign to `chunks` the call to client chat completions (await client.chat.completions.create) with such parameters:
-        #   - deployment_name="gpt-4o"
-        #   - stream=True
-        #   - messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": request.messages[-1].content }]
-        # 3. Make async loop through `chunks` (async for chunk in chunks) and:
-        #   -> if `chunk` has `choices` (chunk.choices):
-        #   -> Get its `delta` (chunk.choices[0].delta) and assign to `delta`
-        #   -> if delta is not None and has `content` (delta.content):
-        #   -> Append delta content to choice (choice.append_content(delta.content))
-
 
 app: DIALApp = DIALApp()
 app.add_chat_completion(deployment_name="essay-assistant", impl=EssayAssistantApplication())
