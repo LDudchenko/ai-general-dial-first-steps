@@ -26,15 +26,17 @@ class EssayAssistantApplication(ChatCompletion):
     async def chat_completion(
             self, request: Request, response: Response
     ) -> None:
-        #TODO:
-        # Create the AsyncDial:
-        #   - `base_url="http://localhost:8080"` (we will use Core that is hosted locally)
-        #   - `api_key="dial_api_key"` (why `dial_api_key` you can find it in core/config.json -> keys.
-        #       Additionally you can change api_key but don't forget to change it in core/config.json and
-        #       docker-compose.yml for chat service)
-        #   - `api_version="2025-01-01-preview"`
 
-        client: AsyncDial = None
+        client: AsyncDial = AsyncDial(base_url="http://localhost:8080", api_key="dial_api_key", api_version="2025-01-01-preview")
+
+        with response.create_single_choice() as choice:
+            chunks = await client.chat.completions.create(deployment_name="gpt-4o", stream=True,
+                                                          messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": request.messages[-1].content }])
+            async for chunk in chunks:
+                if chunk.choices:
+                    delta = chunk.choices[0].delta
+                    if delta  and delta.content:
+                        choice.append_content(delta.content)
 
         #TODO:
         # 1. Create self-closable choice where we return response (you can find this code in echo app)
@@ -51,11 +53,7 @@ class EssayAssistantApplication(ChatCompletion):
 
 
 app: DIALApp = DIALApp()
-#TODO:
-# - add chat completion to `app`:
-#       - use method `add_chat_completion`
-#       - deployment_name is `essay-assistant`
-#       - impl is `EssayAssistantApplication()`
+app.add_chat_completion(deployment_name="essay-assistant", impl=EssayAssistantApplication())
 
 if __name__ == "__main__":
     uvicorn.run(app, port=5025, host="0.0.0.0")

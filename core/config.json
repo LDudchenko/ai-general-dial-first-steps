@@ -1,10 +1,31 @@
 {
   "routes": {},
   "applications": {
-
+    "echo": {
+        "displayName": "My Echo App",
+        "description": "Simple application that repeats user's message",
+        "endpoint": "http://host.docker.internal:5022/openai/deployments/echo/chat/completions"
+    },
+    "essay-assistant": {
+      "displayName": "Essay Assistant",
+      "description": "Essay Assistant. Always answers with essay.",
+      "endpoint": "http://host.docker.internal:5025/openai/deployments/essay-assistant/chat/completions"
+    }
   },
   "models": {
-
+    "gpt-4o": {
+        "displayName": "GPT 4o",
+        "overrideName": "gpt-4o",
+        "endpoint": "http://adapter-dial-openai:5000/openai/deployments/gpt-4o/chat/completions",
+        "iconUrl": "http://localhost:3001/gpt4.svg",
+        "type": "chat",
+        "upstreams": [
+          {
+            "endpoint": "https://api.openai.com/v1/chat/completions",
+            "key": "${OPENAI_API_KEY}"
+          }
+        ]
+     }
   },
   "keys": {
     "dial_api_key": {
@@ -15,7 +36,6 @@
   "roles": {
     "default": {
       "limits": {
-
       }
     }
   }

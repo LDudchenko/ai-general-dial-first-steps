@@ -11,7 +11,7 @@ class EchoApplication(ChatCompletion):
         last_user_message = request.messages[-1]
 
         with response.create_single_choice() as choice:
-            choice.append_content(f"Echo✨\n\r{last_user_message.content}" or "Oops...")
+            choice.append_content(f"abracadabra\n{last_user_message.content}" or "Oops...")
 
 
 app = DIALApp()
